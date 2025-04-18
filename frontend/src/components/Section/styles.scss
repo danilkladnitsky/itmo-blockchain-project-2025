@@ -1,0 +1,13 @@
+$block: '.section';
+
+#{$block} {
+    padding: 16px;
+
+    &__header {
+        margin-bottom: 2px;
+    }
+
+    &__content {
+        overflow-x: auto;
+    }
+}
