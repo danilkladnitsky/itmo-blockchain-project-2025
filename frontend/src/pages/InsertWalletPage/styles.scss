@@ -1,0 +1,25 @@
+$block: '.insert-wallet-page';
+
+#{$block} {
+    height: auto;
+
+    &__form {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        margin-top: 32px;
+
+    }
+
+    &__form-input {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    &__form-title {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+}
