@@ -1,0 +1,5 @@
+requests==2.31.0
+pandas==1.3.5
+numpy==1.21.6
+python-dotenv==0.21.1
+web3==6.11.1
