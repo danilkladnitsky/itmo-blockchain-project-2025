@@ -4,16 +4,12 @@ import bem from 'bem-cn-lite';
 
 import './styles.scss';
 import {Section} from '../Section/Section';
+import {getWalletAddress} from '@/utils/formatWalletAddress';
 
 const b = bem('current-wallet');
 
 export const CurrentWallet = () => {
     const {walletAddress} = useAppContext();
-    const getWalletAddress = (address: string) => {
-        const leftPart = address.slice(0, 7);
-        const rightPart = address.slice(-4);
-        return `${leftPart}...${rightPart}`;
-    };
 
     return (
         <Section title="Wallet address">
