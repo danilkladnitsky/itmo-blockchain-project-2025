@@ -1,0 +1,631 @@
+basePath: /v2
+definitions:
+  adminorder.Model:
+    properties:
+      company_info: {}
+      company_name:
+        type: string
+      created_at:
+        type: string
+      id:
+        type: string
+      inn:
+        type: string
+      rejected_at:
+        type: string
+      status:
+        type: string
+      success_at:
+        type: string
+      tariff_id:
+        type: string
+      users:
+        items:
+          $ref: '#/definitions/adminorder.User'
+        type: array
+    type: object
+  adminorder.Request:
+    properties:
+      company_info: {}
+      company_name:
+        type: string
+      inn:
+        type: string
+      order_id:
+        type: string
+      tariff_id:
+        type: string
+      users:
+        items:
+          $ref: '#/definitions/adminorder.User'
+        type: array
+    type: object
+  adminorder.ResponseModel:
+    properties:
+      order:
+        $ref: '#/definitions/adminorder.Model'
+    type: object
+  adminorder.User:
+    properties:
+      is_admin:
+        type: boolean
+      username:
+        example: телефон или email
+        type: string
+    type: object
+  adminorders.Filter:
+    properties:
+      search:
+        example: example
+        type: string
+      status:
+        additionalProperties:
+          type: string
+        example:
+          all: '{}'
+          rejected: '{}'
+          success: '{}'
+          waiting: '{}'
+        type: object
+    type: object
+  adminorders.Model:
+    properties:
+      items:
+        items:
+          $ref: '#/definitions/adminorder.Model'
+        type: array
+      total:
+        type: integer
+    type: object
+  adminorders.Pagination:
+    properties:
+      limit:
+        type: integer
+      offset:
+        type: integer
+    type: object
+  adminorders.Request:
+    properties:
+      filter:
+        $ref: '#/definitions/adminorders.Filter'
+      order:
+        additionalProperties:
+          type: string
+        example:
+          activatedAt: asc
+        type: object
+      pagination:
+        $ref: '#/definitions/adminorders.Pagination'
+    type: object
+  adminorders.ResponseModel:
+    properties:
+      orders:
+        items:
+          $ref: '#/definitions/adminorders.Model'
+        type: array
+    type: object
+  adminuser.Request:
+    properties:
+      company_id:
+        type: string
+      is_admin:
+        type: boolean
+      password:
+        type: string
+      username:
+        type: string
+    type: object
+  adminuser.Response:
+    properties:
+      string:
+        example: Ok
+        type: string
+    type: object
+  authorize.Model:
+    properties:
+      token:
+        example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImdyQHF3ZXIud2VxIiwiZXhwIjoxNzM3MjE1MDE4LCJ1aWQiOiJlMDgxMzllNi1mYTQyLTQ4ZGMtYTRmYy0yOTNlNDY1N2NmNjAifQ.P81eWq85CbVAunISVzxHHDsXvIgNvwPJOCsidmdNUQA
+        type: string
+    type: object
+  authorize.Request:
+    properties:
+      password:
+        type: string
+      username:
+        type: string
+    type: object
+  authorize.ResponseModel:
+    properties:
+      auth:
+        $ref: '#/definitions/authorize.Model'
+    type: object
+  checkalive.Response:
+    properties:
+      code:
+        example: 200
+        type: integer
+      message:
+        example: OK
+        type: string
+    type: object
+  error.BadRequestErr:
+    properties:
+      error:
+        example: bad request
+        type: string
+    type: object
+  error.ForbiddenErr:
+    properties:
+      error:
+        example: forbidden request
+        type: string
+    type: object
+  error.InternalErr:
+    properties:
+      error:
+        example: internal error
+        type: string
+    type: object
+  order.Model:
+    properties:
+      company_info: {}
+      company_name:
+        type: string
+      created_at:
+        type: string
+      id:
+        type: string
+      inn:
+        type: string
+      rejected_at:
+        type: string
+      success_at:
+        type: string
+      tariff_id:
+        type: string
+      users:
+        items:
+          $ref: '#/definitions/order.User'
+        type: array
+    type: object
+  order.Request:
+    properties:
+      bio:
+        type: string
+      birth_date:
+        type: string
+      birth_place:
+        type: string
+      comissar:
+        type: string
+      company_info:
+        type: string
+      company_name:
+        type: string
+      conflicts:
+        type: string
+      death_date:
+        type: string
+      death_place:
+        type: string
+      documents:
+        description: FixME доделать добавление документов пачкой
+        items:
+          type: integer
+        type: array
+      email:
+        type: string
+      first_name:
+        type: string
+      last_name:
+        type: string
+      patronymic:
+        type: string
+      phone_number:
+        type: string
+      rank:
+        type: string
+    type: object
+  order.ResponseModel:
+    properties:
+      order:
+        $ref: '#/definitions/order.Model'
+    type: object
+  order.User:
+    properties:
+      is_admin:
+        type: boolean
+      username:
+        type: string
+    type: object
+  register.Request:
+    properties:
+      password:
+        type: string
+      username:
+        type: string
+    type: object
+  register.Response:
+    properties:
+      string:
+        example: Ok
+        type: string
+    type: object
+  response.Response:
+    properties:
+      code:
+        example: 200
+        type: integer
+      message:
+        example: OK
+        type: string
+    type: object
+host: petstore.swagger.io
+info:
+  contact:
+    email: support@swagger.io
+    name: API Support
+    url: http://www.swagger.io/support
+  description: This is a sample server Petstore server.
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  termsOfService: http://swagger.io/terms/
+  title: Swagger Example API
+  version: "1.0"
+paths:
+  /admin/api/v1/create-user:
+    post:
+      consumes:
+      - application/json
+      description: Создает нового пользователя с указанными username и password. Username
+        должен быть валидным email-адресом.
+      parameters:
+      - description: Параметры запроса
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/adminuser.Request'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Пользователь успешно зарегистрирован
+          schema:
+            $ref: '#/definitions/adminuser.Response'
+        "400":
+          description: Некорректный ввод
+          schema:
+            $ref: '#/definitions/error.InternalErr'
+        "403":
+          description: Ошибка авторизации
+          schema:
+            $ref: '#/definitions/error.ForbiddenErr'
+        "500":
+          description: Внутренняя ошибка сервера
+          schema:
+            $ref: '#/definitions/error.BadRequestErr'
+      summary: Регистрация пользователя компании
+      tags:
+      - admin-user
+  /admin/api/v1/order-accept:
+    post:
+      consumes:
+      - application/json
+      description: Админ принимает заказ -> создается компания, лицензия, пользователи
+      parameters:
+      - description: Обязательные поля - order_id и tariff_id, остальные вносить только
+          при изменении!!!!
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/adminorder.Request'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Компания и лицензия успешно созданы
+          schema:
+            $ref: '#/definitions/adminorder.ResponseModel'
+        "400":
+          description: Некорректный ввод
+          schema:
+            $ref: '#/definitions/error.InternalErr'
+        "403":
+          description: Ошибка авторизации
+          schema:
+            $ref: '#/definitions/error.ForbiddenErr'
+        "500":
+          description: Внутренняя ошибка сервера
+          schema:
+            $ref: '#/definitions/error.BadRequestErr'
+      summary: Админ принимает заказ
+      tags:
+      - admin-order
+  /admin/api/v1/order/{order_id}:
+    get:
+      consumes:
+      - application/json
+      description: Получение заказа по ID
+      parameters:
+      - description: Order ID
+        in: path
+        name: order_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Компания успешно создана
+          schema:
+            $ref: '#/definitions/adminorder.ResponseModel'
+        "400":
+          description: Некорректный ввод
+          schema:
+            $ref: '#/definitions/error.InternalErr'
+        "403":
+          description: Ошибка авторизации
+          schema:
+            $ref: '#/definitions/error.ForbiddenErr'
+        "500":
+          description: Внутренняя ошибка сервера
+          schema:
+            $ref: '#/definitions/error.BadRequestErr'
+      summary: Получение заказа по ID
+      tags:
+      - admin-order
+    patch:
+      consumes:
+      - application/json
+      description: Отклоняет заказа
+      parameters:
+      - description: Order ID
+        in: path
+        name: order_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Заказ  отклонен
+          schema:
+            $ref: '#/definitions/adminorder.ResponseModel'
+        "400":
+          description: Некорректный ввод
+          schema:
+            $ref: '#/definitions/error.InternalErr'
+        "403":
+          description: Ошибка авторизации
+          schema:
+            $ref: '#/definitions/error.ForbiddenErr'
+        "500":
+          description: Внутренняя ошибка сервера
+          schema:
+            $ref: '#/definitions/error.BadRequestErr'
+      summary: Отклоняет заказа
+      tags:
+      - admin-order
+  /admin/api/v1/orders/filter:
+    post:
+      consumes:
+      - application/json
+      description: Получение заказов
+      parameters:
+      - description: Получение заказов
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/adminorders.Request'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Тариф  создан
+          schema:
+            $ref: '#/definitions/adminorders.ResponseModel'
+        "400":
+          description: Некорректный ввод
+          schema:
+            $ref: '#/definitions/error.InternalErr'
+        "403":
+          description: Ошибка авторизации
+          schema:
+            $ref: '#/definitions/error.ForbiddenErr'
+        "500":
+          description: Внутренняя ошибка сервера
+          schema:
+            $ref: '#/definitions/error.BadRequestErr'
+      summary: Получение заказов
+      tags:
+      - admin-orders
+  /api/v1/alive:
+    get:
+      consumes:
+      - application/json
+      description: Проверка доступен ли сервис
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Service alive
+          schema:
+            $ref: '#/definitions/checkalive.Response'
+        "400":
+          description: Invalid input
+          schema:
+            $ref: '#/definitions/response.Response'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: Проверка доступен ли сервис
+  /api/v1/auth:
+    post:
+      consumes:
+      - application/json
+      description: Авторизует пользователя с указанными username и password. Username
+        должен быть валидным email-адресом или номером телефона.
+      parameters:
+      - description: 'Параметры запроса: имя пользователя и пароль'
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/authorize.Request'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Пользователь успешно зарегистрирован
+          schema:
+            $ref: '#/definitions/authorize.ResponseModel'
+        "400":
+          description: Некорректный ввод
+          schema:
+            $ref: '#/definitions/error.InternalErr'
+        "403":
+          description: Ошибка авторизации
+          schema:
+            $ref: '#/definitions/error.ForbiddenErr'
+        "500":
+          description: Внутренняя ошибка сервера
+          schema:
+            $ref: '#/definitions/error.BadRequestErr'
+      summary: Авторизация пользователя
+      tags:
+      - authorization
+  /api/v1/elk-auth:
+    get:
+      consumes:
+      - application/json
+      description: 'Авторизация через ЕЛК: возвращает токен доступа к сервису'
+      parameters:
+      - description: Код авторизации
+        in: query
+        name: code
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: "Ok\"\t\t\t\t\"Ok"
+          schema:
+            type: string
+        "400":
+          description: Некорректный ввод
+          schema:
+            $ref: '#/definitions/error.InternalErr'
+        "403":
+          description: Ошибка авторизации
+          schema:
+            $ref: '#/definitions/error.ForbiddenErr'
+        "500":
+          description: Внутренняя ошибка сервера
+          schema:
+            $ref: '#/definitions/error.BadRequestErr'
+      summary: Авторизация через ЕЛК
+      tags:
+      - elk-auth
+  /api/v1/order-create:
+    post:
+      consumes:
+      - application/json
+      description: Создание заказа для юр лица
+      parameters:
+      - description: Создание заказа
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/order.Request'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Зказа  создан
+          schema:
+            $ref: '#/definitions/order.ResponseModel'
+        "400":
+          description: Некорректный ввод
+          schema:
+            $ref: '#/definitions/error.InternalErr'
+        "403":
+          description: Ошибка авторизации
+          schema:
+            $ref: '#/definitions/error.ForbiddenErr'
+        "500":
+          description: Внутренняя ошибка сервера
+          schema:
+            $ref: '#/definitions/error.BadRequestErr'
+      summary: Создание заказа для юр лица
+      tags:
+      - order
+  /api/v1/refresh:
+    post:
+      consumes:
+      - application/json
+      description: Возвращает обновленный токен
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Обновленный токен
+          schema:
+            $ref: '#/definitions/authorize.ResponseModel'
+        "400":
+          description: Некорректный ввод
+          schema:
+            $ref: '#/definitions/error.InternalErr'
+        "403":
+          description: Ошибка авторизации
+          schema:
+            $ref: '#/definitions/error.ForbiddenErr'
+        "500":
+          description: Внутренняя ошибка сервера
+          schema:
+            $ref: '#/definitions/error.BadRequestErr'
+      summary: Обновляет токен
+      tags:
+      - authorization
+  /api/v1/register:
+    post:
+      consumes:
+      - application/json
+      description: Создает нового пользователя с указанными username и password. Username
+        должен быть валидным email-адресом.
+      parameters:
+      - description: 'Параметры запроса: имя пользователя и пароль'
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/register.Request'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Пользователь успешно зарегистрирован
+          schema:
+            $ref: '#/definitions/register.Response'
+        "400":
+          description: Некорректный ввод
+          schema:
+            $ref: '#/definitions/error.InternalErr'
+        "403":
+          description: Ошибка авторизации
+          schema:
+            $ref: '#/definitions/error.ForbiddenErr'
+        "500":
+          description: Внутренняя ошибка сервера
+          schema:
+            $ref: '#/definitions/error.BadRequestErr'
+      summary: Регистрация пользователя
+      tags:
+      - authorization
+swagger: "2.0"

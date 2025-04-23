@@ -1,0 +1,48 @@
+env: "dev" # Окружение - local, dev или prod
+migration_path: "./resources/postgres/migration" # путь к миграциям БД
+
+minio:
+  bucket_name: test
+  minio_root_user: test
+  minio_root_password: password
+  minio_host: minio:9000
+
+database:
+  addr: test_db:5432
+  db_name: test_db
+  username: test
+  password: test123
+  pool_max_cons: 20
+
+redis:
+  addr: redis_container:6379
+  password: test
+
+http_server:
+  host: 0.0.0.0
+  port: 8083
+  address: "localhost:8083"
+  timeout: 5s
+  idle_timeout: 5s
+
+cors:
+  debug: true
+  allowed-methods: [ "GET", "POST", "PATCH", "PUT", "OPTIONS", "DELETE" ]
+  allowed-origins:
+    - "*"
+  allow-credentials: true
+  allowed-headers:
+    - "Authorization"
+    - "Location"
+    - "Charset"
+    - "Content-Type"
+    - "Origin"
+    - "Accept"
+    - "Content-Length"
+    - "Accept-Encoding"
+    - "X-CSRF-Token"
+  options-passthrough: false
+  exposed-headers:
+    - "Location"
+    - "Authorization"
+    - "Content-Disposition"

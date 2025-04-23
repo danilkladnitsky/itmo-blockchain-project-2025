@@ -1,0 +1,269 @@
+GET localhost:8083/alive
+
+###Регистрация
+POST localhost:8083/api/v1/register
+accept: application/json
+Content-Type: application/json
+
+{
+	"username": "gr@qwer.weq",
+	"password": "pas123"
+}
+
+###Авторизация
+POST localhost:8083/api/v1/auth
+accept: application/json
+Content-Type: application/json
+
+{
+	"username": "gr@qwer.weq",
+	"password": "pas123"
+}
+
+###Тест
+GET localhost:8083/api/v1/test
+accept: application/json
+Content-Type: application/json
+Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjcmVhdGVfYXQiOiIyMDI1LTAyLTA1VDA5OjA3OjE1Ljg4ODUzNloiLCJleHBpcmVzX2F0IjoiMjAyNS0wMy0wNVQwOTowNzoxNVoiLCJ1c2VySUQiOiJkNjg2M2VmOC03NWMxLTRiYTYtYmY0ZS0xYzNiZmE2Yzc1YmUiLCJ1c2VybmFtZSI6ImdyQHF3ZXIud2VxIn0.pdSbhIqGjJBCbb__c8uDlqDn8JX0igrW6cc-TUqwhPk
+
+{
+}
+
+###Создание исследования
+POST http://localhost:8083/api/v1/study-create
+Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjcmVhdGVfYXQiOiIyMDI1LTAyLTEzVDEzOjA1OjQwLjE5ODUwNVoiLCJleHBpcmVzX2F0IjoiMjAyNS0wMy0xM1QxMzowNTo0MFoiLCJ1c2VySUQiOiIwOGQwODA4Mi00MjYwLTQ5YjItYjZjYS0zNzVhODE3ZTU5ZDYiLCJ1c2VybmFtZSI6ImdyQHF3ZXIud2VxIn0.6SZRHkq0RZVYPZILh04CpDUP_HpXeqdEe7upqKnJaKc
+Content-Type: multipart/form-data; boundary=WebAppBoundary
+
+--WebAppBoundary
+Content-Disposition: form-data; name="file"; filename="плесень.jpeg"
+
+< mold.jpeg
+--WebAppBoundary--
+
+###Получение исследования по Id
+GET http://localhost:8083/api/v1/study/0f52f1e2-f9e5-4f65-bb14-169072ac4629
+accept: application/json
+Content-Type: application/json
+Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjcmVhdGVfYXQiOiIyMDI1LTAyLTA4VDA3OjI0OjA0LjUyNzMzNDkzMloiLCJleHBpcmVzX2F0IjoiMjAyNS0wMy0wOFQwNzoyNDowNFoiLCJ1c2VySUQiOiJmZjI0OGE4YS1mNDhiLTRmNGQtYjNkOS02ZjQ4MGIzNzU0ODYiLCJ1c2VybmFtZSI6ImdyQHF3ZXIud2VxIn0.xojmuVK22UWepsYVrEzO-D66TFkDRctdOvY4vxLJJDs
+
+
+{}
+
+###Получение тарифов
+POST localhost:8083/admin/api/v1/tariffs/filter
+accept: application/json
+Content-Type: application/json
+Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3Mzg4NjAzNDcsImlzQWRtaW4iOmZhbHNlLCJ1c2VySUQiOiI4OTE0NjhhNS1jODM2LTQyYTktODQ4Ny1iMTVlMGMxZmNmNDQiLCJ1c2VybmFtZSI6Im9sZWdAb2xlZ292LnRlc3QifQ.bnv2x9zvHY-7NOzddl5j0K0b-mNoZ9EJzMETUsJSfAw
+
+{
+	"filter": {
+		"search": "example"
+	},
+	"order": {
+		"activatedAt": "asc"
+	},
+	"pagination": {
+		"limit": 5,
+		"offset": 0
+	}
+}
+
+###Создание тарифа
+POST localhost:8083/admin/api/v1/tariff-create
+accept: application/json
+Content-Type: application/json
+
+{
+	"kind": "company",
+	"name": "string",
+	"period": 10,
+	"limit": 12
+}
+
+###Создание заказа
+POST localhost:8083/api/v1/order-create
+accept: application/json
+Content-Type: application/json
+
+{
+	"company_info": "string",
+	"company_name": "string",
+	"inn": "1234",
+	"tariff_id": "422331ea-a138-4a19-9706-9c32472eae0a",
+	"users": [
+		{
+			"is_admin": true,
+			"username": "stng"
+		},
+		{
+			"is_admin": false,
+			"username": "stng"
+		}
+	]
+}
+
+###Accept заказа
+POST http://localhost:8083/admin/api/v1/order-accept
+accept: application/json
+Content-Type: application/json
+
+{
+	"company_info": "string",
+	"company_name": "string",
+	"inn": "string",
+	"order_id": "c5cab309-65c8-4156-bbd6-b56b03220aea",
+	"tariff_id": "b6087daa-5b59-4b78-8276-a639671475a0",
+	"users": [
+		{
+			"is_admin": false,
+			"username": "qwer"
+		},
+		{
+			"is_admin": false,
+			"username": "1qwert234"
+		},
+		{
+			"is_admin": false,
+			"username": "ww"
+		},
+		{
+			"is_admin": false,
+			"username": "ee"
+		},
+		{
+			"is_admin": false,
+			"username": "rr"
+		},
+		{
+			"is_admin": false,
+			"username": "tt"
+		},
+		{
+			"is_admin": false,
+			"username": "123456789"
+		},
+		{
+			"is_admin": false,
+			"username": "yy"
+		}
+	]
+}
+
+###Отклонение заказа
+PATCH localhost:8083/admin/api/v1/order/09f165fb-1bf9-4953-b4ce-d81764bbf7b2
+accept: application/json
+
+###Получение списка заказов
+POST localhost:8083/admin/api/v1/orders/filter
+accept: application/json
+Content-Type: application/json
+
+{
+	"filter": {
+		"status": {
+			"all": "{}",
+			"rejected": "{}",
+			"success": "{}",
+			"waiting": "{}"
+		}
+	},
+	"order": {
+		"activatedAt": "asc"
+	}
+}
+
+###Получение исследований пользователя
+POST http://localhost:8083/api/v1/study/filter
+accept: application/json
+Content-Type: application/json
+Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjcmVhdGVfYXQiOiIyMDI1LTAyLTA5VDA4OjA5OjU2LjYwNTgzOTE5M1oiLCJleHBpcmVzX2F0IjoiMjAyNS0wMy0wOVQwODowOTo1NloiLCJ1c2VySUQiOiIwZDcwYWRjNC0wNmY5LTQ1NWMtOTY2YS0yNzFhOTlhZGE4YzQiLCJ1c2VybmFtZSI6ImdyQHF3ZXIud2VxIn0.5rvHKI8JR1OsR9B1vJNRPUhYvYtWr0JVkrZvTGkfpyI
+
+{
+	"filter": {
+		"dateRange": {
+			"end": "2025-02-10T22:33:05+05:00"
+		},
+		"search": "жопа"
+	},
+	"order": {
+		"colonies": "asc"
+	}
+}
+
+###Обновление информации об исследовании
+PATCH http://localhost:8083/api/v1/study/8b67e4ee-5324-4ffe-8a35-0d1d93ea8f46
+accept: application/json
+Content-Type: application/json
+Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjcmVhdGVfYXQiOiIyMDI1LTAyLTA5VDA4OjA5OjU2LjYwNTgzOTE5M1oiLCJleHBpcmVzX2F0IjoiMjAyNS0wMy0wOVQwODowOTo1NloiLCJ1c2VySUQiOiIwZDcwYWRjNC0wNmY5LTQ1NWMtOTY2YS0yNzFhOTlhZGE4YzQiLCJ1c2VybmFtZSI6ImdyQHF3ZXIud2VxIn0.5rvHKI8JR1OsR9B1vJNRPUhYvYtWr0JVkrZvTGkfpyI
+
+{
+	"name": "жопа"
+}
+
+###
+DELETE http://localhost:8083/api/v1/study/delete
+accept: application/json
+Content-Type: application/json
+Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjcmVhdGVfYXQiOiIyMDI1LTAyLTA5VDA4OjA5OjU2LjYwNTgzOTE5M1oiLCJleHBpcmVzX2F0IjoiMjAyNS0wMy0wOVQwODowOTo1NloiLCJ1c2VySUQiOiIwZDcwYWRjNC0wNmY5LTQ1NWMtOTY2YS0yNzFhOTlhZGE4YzQiLCJ1c2VybmFtZSI6ImdyQHF3ZXIud2VxIn0.5rvHKI8JR1OsR9B1vJNRPUhYvYtWr0JVkrZvTGkfpyI
+
+{
+	"studies_id": [
+		"8b67e4ee-5324-4ffe-8a35-0d1d93ea8f46"
+	]
+}
+
+###Получение списка компаний
+POST http://localhost:8083/admin/api/v1/companies/filter
+accept: application/json
+Content-Type: application/json
+
+{
+	"filter": {
+		"search": "",
+		"status": {
+			"active": true,
+			"deleted": false
+		}
+	},
+	"order": {
+		"createdAt": "desc"
+	},
+	"pagination": {
+		"limit": 100,
+		"offset": 0
+	}
+}
+
+###
+
+GET localhost:8083/api/v1/elk-redirect?code=224&state=gui/
+accept: application/json
+Content-Type: application/json
+
+{}
+
+###
+GET http://localhost:8083/elk-auth
+accept: application/json
+
+###
+GET http://localhost:8083/api/v1/elk-auth?
+    code=def502005fc3c4d59e957e971c5550c0d9f62ebf91760c1abb4e466ac99fc0bafbd82d0c9a055c65c32d7512179886952d2ef367610e5b14ea581fa0d71f70ee8524ad085bcf084e11fc41576aa7e437a0a0176bd7842309412b05769391e03fb573249ab05ff7d1d86b74131f5b3264cee0287ae416990e624d75a62425ac03c8e071796b77cbb078dd34dfb60b4c2b7e0b8423f6f0bb558396623d05b159ded7a5a369da2d16f2eebd0063e70220aba842ba25770e13d121b19b2e1adea59786994a74c63d33fcd15b8ac3ba422887c19a4f559ac52cd8a210c5f478a07f59990e6541eb11d57316b91a227028307b819075c703650e386e1d3656f6d9a4286170b3d1c5c62552c2d8b8a8cd5c41f2977a63d14d7722a4c376b97ce32aef33381026940e3fe2b7ca2b1d16280b2883b18ca9aea1080a9caf758324e475f0ceb85d85f334e1ffa192a9ee55dd20785dae59a522e7d5808de089a68a14162c3f6e122baceb2785765e581482c1a54973273dbb3e4284a30712baf9ab0093c264d08f97284996b5e292
+accept: application/json
+
+###Тест
+GET localhost:8083/api/v1/test
+accept: application/json
+Content-Type: application/json
+Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjcmVhdGVfYXQiOiIyMDI1LTAyLTE2VDA1OjMxOjM2Ljg1MzE2M1oiLCJleHBpcmVzX2F0IjoiMjAyNS0wMy0xNlQwNTozMTozNloiLCJ1c2VySUQiOjQ2NDE2MywidXNlcm5hbWUiOiIifQ.80_nM5RQAq1nl7axIrsjus2VMb32LVAJYu7-hoN3rzs
+
+{
+}
+
+
+
+
+
+
+
+
