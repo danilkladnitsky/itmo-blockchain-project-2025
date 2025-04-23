@@ -1,5 +1,5 @@
 import {Section} from '../Section/Section';
-import {Box, Card, Progress, ProgressTheme, Text} from '@gravity-ui/uikit';
+import {Box, Card, ClipboardButton, Progress, ProgressTheme, Text} from '@gravity-ui/uikit';
 import bem from 'bem-cn-lite';
 import {getWalletAddress} from '@/utils/formatWalletAddress';
 
@@ -15,10 +15,27 @@ const Wallet = ({address, balance}: WalletProps) => {
     const confidenceTheme: ProgressTheme =
         confidence > 80 ? 'success' : confidence > 60 ? 'warning' : 'default';
 
+    const copyToClipboard = () => {
+        navigator.clipboard.writeText(address);
+    };
+
     return (
         <Card className={b('wallet')}>
-            <Text variant="body-1">Address: {getWalletAddress(address)}</Text>
-            <Text variant="body-1">Balance: {balance}</Text>
+            <Text variant="body-1">
+                Address:{' '}
+                <Box>
+                    <Text color="secondary">{getWalletAddress(address)}</Text>
+                    <ClipboardButton
+                        onClick={copyToClipboard}
+                        content={address}
+                        text="Copy"
+                        size="xs"
+                    />
+                </Box>
+            </Text>
+            <Text variant="body-1">
+                Balance: <Text color="secondary">{balance}</Text>
+            </Text>
             <Box>
                 <Progress
                     text={`${confidence}% confidence`}

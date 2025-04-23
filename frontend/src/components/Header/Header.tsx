@@ -7,7 +7,9 @@ const b = bem('header');
 const AppVersion = () => {
     return (
         <Link href="https://github.com/danilkladnitsky/itmo-blockchain-project-2025">
-            <Label className={b('version')}>Github</Label>
+            <Label size="s" className={b('version')}>
+                Github
+            </Label>
         </Link>
     );
 };
