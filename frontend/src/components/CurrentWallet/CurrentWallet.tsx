@@ -24,6 +24,7 @@ export const CurrentWallet = () => {
                 <Box className={b('address')}>
                     <Text variant="body-1">{getWalletAddress(walletAddress)}</Text>
                     <ClipboardButton
+                        // @ts-ignore
                         onClick={copyToClipboard}
                         content={walletAddress}
                         text="Copy"

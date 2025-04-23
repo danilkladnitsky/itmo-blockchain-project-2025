@@ -26,6 +26,7 @@ const Wallet = ({address, balance}: WalletProps) => {
                 <Box>
                     <Text color="secondary">{getWalletAddress(address)}</Text>
                     <ClipboardButton
+                        // @ts-ignore
                         onClick={copyToClipboard}
                         content={address}
                         text="Copy"
