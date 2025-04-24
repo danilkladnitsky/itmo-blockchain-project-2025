@@ -24,260 +24,6 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
-        "/admin/api/v1/create-user": {
-            "post": {
-                "description": "Создает нового пользователя с указанными username и password. Username должен быть валидным email-адресом.",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "admin-user"
-                ],
-                "summary": "Регистрация пользователя компании",
-                "parameters": [
-                    {
-                        "description": "Параметры запроса",
-                        "name": "request",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/adminuser.Request"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Пользователь успешно зарегистрирован",
-                        "schema": {
-                            "$ref": "#/definitions/adminuser.Response"
-                        }
-                    },
-                    "400": {
-                        "description": "Некорректный ввод",
-                        "schema": {
-                            "$ref": "#/definitions/error.InternalErr"
-                        }
-                    },
-                    "403": {
-                        "description": "Ошибка авторизации",
-                        "schema": {
-                            "$ref": "#/definitions/error.ForbiddenErr"
-                        }
-                    },
-                    "500": {
-                        "description": "Внутренняя ошибка сервера",
-                        "schema": {
-                            "$ref": "#/definitions/error.BadRequestErr"
-                        }
-                    }
-                }
-            }
-        },
-        "/admin/api/v1/order-accept": {
-            "post": {
-                "description": "Админ принимает заказ -\u003e создается компания, лицензия, пользователи",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "admin-order"
-                ],
-                "summary": "Админ принимает заказ",
-                "parameters": [
-                    {
-                        "description": "Обязательные поля - order_id и tariff_id, остальные вносить только при изменении!!!!",
-                        "name": "request",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/adminorder.Request"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Компания и лицензия успешно созданы",
-                        "schema": {
-                            "$ref": "#/definitions/adminorder.ResponseModel"
-                        }
-                    },
-                    "400": {
-                        "description": "Некорректный ввод",
-                        "schema": {
-                            "$ref": "#/definitions/error.InternalErr"
-                        }
-                    },
-                    "403": {
-                        "description": "Ошибка авторизации",
-                        "schema": {
-                            "$ref": "#/definitions/error.ForbiddenErr"
-                        }
-                    },
-                    "500": {
-                        "description": "Внутренняя ошибка сервера",
-                        "schema": {
-                            "$ref": "#/definitions/error.BadRequestErr"
-                        }
-                    }
-                }
-            }
-        },
-        "/admin/api/v1/order/{order_id}": {
-            "get": {
-                "description": "Получение заказа по ID",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "admin-order"
-                ],
-                "summary": "Получение заказа по ID",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Order ID",
-                        "name": "order_id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Компания успешно создана",
-                        "schema": {
-                            "$ref": "#/definitions/adminorder.ResponseModel"
-                        }
-                    },
-                    "400": {
-                        "description": "Некорректный ввод",
-                        "schema": {
-                            "$ref": "#/definitions/error.InternalErr"
-                        }
-                    },
-                    "403": {
-                        "description": "Ошибка авторизации",
-                        "schema": {
-                            "$ref": "#/definitions/error.ForbiddenErr"
-                        }
-                    },
-                    "500": {
-                        "description": "Внутренняя ошибка сервера",
-                        "schema": {
-                            "$ref": "#/definitions/error.BadRequestErr"
-                        }
-                    }
-                }
-            },
-            "patch": {
-                "description": "Отклоняет заказа",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "admin-order"
-                ],
-                "summary": "Отклоняет заказа",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Order ID",
-                        "name": "order_id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Заказ  отклонен",
-                        "schema": {
-                            "$ref": "#/definitions/adminorder.ResponseModel"
-                        }
-                    },
-                    "400": {
-                        "description": "Некорректный ввод",
-                        "schema": {
-                            "$ref": "#/definitions/error.InternalErr"
-                        }
-                    },
-                    "403": {
-                        "description": "Ошибка авторизации",
-                        "schema": {
-                            "$ref": "#/definitions/error.ForbiddenErr"
-                        }
-                    },
-                    "500": {
-                        "description": "Внутренняя ошибка сервера",
-                        "schema": {
-                            "$ref": "#/definitions/error.BadRequestErr"
-                        }
-                    }
-                }
-            }
-        },
-        "/admin/api/v1/orders/filter": {
-            "post": {
-                "description": "Получение заказов",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "admin-orders"
-                ],
-                "summary": "Получение заказов",
-                "parameters": [
-                    {
-                        "description": "Получение заказов",
-                        "name": "request",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/adminorders.Request"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Тариф  создан",
-                        "schema": {
-                            "$ref": "#/definitions/adminorders.ResponseModel"
-                        }
-                    },
-                    "400": {
-                        "description": "Некорректный ввод",
-                        "schema": {
-                            "$ref": "#/definitions/error.InternalErr"
-                        }
-                    },
-                    "403": {
-                        "description": "Ошибка авторизации",
-                        "schema": {
-                            "$ref": "#/definitions/error.ForbiddenErr"
-                        }
-                    },
-                    "500": {
-                        "description": "Внутренняя ошибка сервера",
-                        "schema": {
-                            "$ref": "#/definitions/error.BadRequestErr"
-                        }
-                    }
-                }
-            }
-        },
         "/api/v1/alive": {
             "get": {
                 "description": "Проверка доступен ли сервис",
@@ -310,9 +56,9 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/v1/auth": {
+        "/api/v1/analyze": {
             "post": {
-                "description": "Авторизует пользователя с указанными username и password. Username должен быть валидным email-адресом или номером телефона.",
+                "description": "Get transactions for Ethereum address using Moralis API",
                 "consumes": [
                     "application/json"
                 ],
@@ -320,238 +66,37 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "authorization"
+                    "analyze"
                 ],
-                "summary": "Авторизация пользователя",
+                "summary": "Analyze Ethereum address",
                 "parameters": [
                     {
-                        "description": "Параметры запроса: имя пользователя и пароль",
+                        "description": "Ethereum address to analyze",
                         "name": "request",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/authorize.Request"
+                            "$ref": "#/definitions/analyze.Request"
                         }
                     }
                 ],
                 "responses": {
                     "200": {
-                        "description": "Пользователь успешно зарегистрирован",
+                        "description": "Transactions retrieved successfully",
                         "schema": {
-                            "$ref": "#/definitions/authorize.ResponseModel"
+                            "$ref": "#/definitions/analyze.Response"
                         }
                     },
                     "400": {
-                        "description": "Некорректный ввод",
-                        "schema": {
-                            "$ref": "#/definitions/error.InternalErr"
-                        }
-                    },
-                    "403": {
-                        "description": "Ошибка авторизации",
-                        "schema": {
-                            "$ref": "#/definitions/error.ForbiddenErr"
-                        }
-                    },
-                    "500": {
-                        "description": "Внутренняя ошибка сервера",
+                        "description": "Invalid Ethereum address",
                         "schema": {
                             "$ref": "#/definitions/error.BadRequestErr"
                         }
-                    }
-                }
-            }
-        },
-        "/api/v1/elk-auth": {
-            "get": {
-                "description": "Авторизация через ЕЛК: возвращает токен доступа к сервису",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "elk-auth"
-                ],
-                "summary": "Авторизация через ЕЛК",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Код авторизации",
-                        "name": "code",
-                        "in": "query",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Ok\"\t\t\t\t\"Ok",
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    "400": {
-                        "description": "Некорректный ввод",
-                        "schema": {
-                            "$ref": "#/definitions/error.InternalErr"
-                        }
-                    },
-                    "403": {
-                        "description": "Ошибка авторизации",
-                        "schema": {
-                            "$ref": "#/definitions/error.ForbiddenErr"
-                        }
                     },
                     "500": {
-                        "description": "Внутренняя ошибка сервера",
-                        "schema": {
-                            "$ref": "#/definitions/error.BadRequestErr"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/v1/order-create": {
-            "post": {
-                "description": "Создание заказа для юр лица",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "order"
-                ],
-                "summary": "Создание заказа для юр лица",
-                "parameters": [
-                    {
-                        "description": "Создание заказа",
-                        "name": "request",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/order.Request"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Зказа  создан",
-                        "schema": {
-                            "$ref": "#/definitions/order.ResponseModel"
-                        }
-                    },
-                    "400": {
-                        "description": "Некорректный ввод",
+                        "description": "Internal server error",
                         "schema": {
                             "$ref": "#/definitions/error.InternalErr"
-                        }
-                    },
-                    "403": {
-                        "description": "Ошибка авторизации",
-                        "schema": {
-                            "$ref": "#/definitions/error.ForbiddenErr"
-                        }
-                    },
-                    "500": {
-                        "description": "Внутренняя ошибка сервера",
-                        "schema": {
-                            "$ref": "#/definitions/error.BadRequestErr"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/v1/refresh": {
-            "post": {
-                "description": "Возвращает обновленный токен",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "authorization"
-                ],
-                "summary": "Обновляет токен",
-                "responses": {
-                    "200": {
-                        "description": "Обновленный токен",
-                        "schema": {
-                            "$ref": "#/definitions/authorize.ResponseModel"
-                        }
-                    },
-                    "400": {
-                        "description": "Некорректный ввод",
-                        "schema": {
-                            "$ref": "#/definitions/error.InternalErr"
-                        }
-                    },
-                    "403": {
-                        "description": "Ошибка авторизации",
-                        "schema": {
-                            "$ref": "#/definitions/error.ForbiddenErr"
-                        }
-                    },
-                    "500": {
-                        "description": "Внутренняя ошибка сервера",
-                        "schema": {
-                            "$ref": "#/definitions/error.BadRequestErr"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/v1/register": {
-            "post": {
-                "description": "Создает нового пользователя с указанными username и password. Username должен быть валидным email-адресом.",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "authorization"
-                ],
-                "summary": "Регистрация пользователя",
-                "parameters": [
-                    {
-                        "description": "Параметры запроса: имя пользователя и пароль",
-                        "name": "request",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/register.Request"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Пользователь успешно зарегистрирован",
-                        "schema": {
-                            "$ref": "#/definitions/register.Response"
-                        }
-                    },
-                    "400": {
-                        "description": "Некорректный ввод",
-                        "schema": {
-                            "$ref": "#/definitions/error.InternalErr"
-                        }
-                    },
-                    "403": {
-                        "description": "Ошибка авторизации",
-                        "schema": {
-                            "$ref": "#/definitions/error.ForbiddenErr"
-                        }
-                    },
-                    "500": {
-                        "description": "Внутренняя ошибка сервера",
-                        "schema": {
-                            "$ref": "#/definitions/error.BadRequestErr"
                         }
                     }
                 }
@@ -559,214 +104,31 @@ const docTemplate = `{
         }
     },
     "definitions": {
-        "adminorder.Model": {
+        "analyze.Request": {
+            "type": "object",
+            "required": [
+                "address"
+            ],
+            "properties": {
+                "address": {
+                    "type": "string"
+                }
+            }
+        },
+        "analyze.Response": {
             "type": "object",
             "properties": {
-                "company_info": {},
-                "company_name": {
-                    "type": "string"
-                },
-                "created_at": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "string"
-                },
-                "inn": {
-                    "type": "string"
-                },
-                "rejected_at": {
+                "message": {
                     "type": "string"
                 },
                 "status": {
                     "type": "string"
                 },
-                "success_at": {
-                    "type": "string"
-                },
-                "tariff_id": {
-                    "type": "string"
-                },
-                "users": {
+                "transactions": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/adminorder.User"
+                        "$ref": "#/definitions/moralis.Transaction"
                     }
-                }
-            }
-        },
-        "adminorder.Request": {
-            "type": "object",
-            "properties": {
-                "company_info": {},
-                "company_name": {
-                    "type": "string"
-                },
-                "inn": {
-                    "type": "string"
-                },
-                "order_id": {
-                    "type": "string"
-                },
-                "tariff_id": {
-                    "type": "string"
-                },
-                "users": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/adminorder.User"
-                    }
-                }
-            }
-        },
-        "adminorder.ResponseModel": {
-            "type": "object",
-            "properties": {
-                "order": {
-                    "$ref": "#/definitions/adminorder.Model"
-                }
-            }
-        },
-        "adminorder.User": {
-            "type": "object",
-            "properties": {
-                "is_admin": {
-                    "type": "boolean"
-                },
-                "username": {
-                    "type": "string",
-                    "example": "телефон или email"
-                }
-            }
-        },
-        "adminorders.Filter": {
-            "type": "object",
-            "properties": {
-                "search": {
-                    "type": "string",
-                    "example": "example"
-                },
-                "status": {
-                    "type": "object",
-                    "additionalProperties": {
-                        "type": "string"
-                    },
-                    "example": {
-                        "all": "{}",
-                        "rejected": "{}",
-                        "success": "{}",
-                        "waiting": "{}"
-                    }
-                }
-            }
-        },
-        "adminorders.Model": {
-            "type": "object",
-            "properties": {
-                "items": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/adminorder.Model"
-                    }
-                },
-                "total": {
-                    "type": "integer"
-                }
-            }
-        },
-        "adminorders.Pagination": {
-            "type": "object",
-            "properties": {
-                "limit": {
-                    "type": "integer"
-                },
-                "offset": {
-                    "type": "integer"
-                }
-            }
-        },
-        "adminorders.Request": {
-            "type": "object",
-            "properties": {
-                "filter": {
-                    "$ref": "#/definitions/adminorders.Filter"
-                },
-                "order": {
-                    "type": "object",
-                    "additionalProperties": {
-                        "type": "string"
-                    },
-                    "example": {
-                        "activatedAt": "asc"
-                    }
-                },
-                "pagination": {
-                    "$ref": "#/definitions/adminorders.Pagination"
-                }
-            }
-        },
-        "adminorders.ResponseModel": {
-            "type": "object",
-            "properties": {
-                "orders": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/adminorders.Model"
-                    }
-                }
-            }
-        },
-        "adminuser.Request": {
-            "type": "object",
-            "properties": {
-                "company_id": {
-                    "type": "string"
-                },
-                "is_admin": {
-                    "type": "boolean"
-                },
-                "password": {
-                    "type": "string"
-                },
-                "username": {
-                    "type": "string"
-                }
-            }
-        },
-        "adminuser.Response": {
-            "type": "object",
-            "properties": {
-                "string": {
-                    "type": "string",
-                    "example": "Ok"
-                }
-            }
-        },
-        "authorize.Model": {
-            "type": "object",
-            "properties": {
-                "token": {
-                    "type": "string",
-                    "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImdyQHF3ZXIud2VxIiwiZXhwIjoxNzM3MjE1MDE4LCJ1aWQiOiJlMDgxMzllNi1mYTQyLTQ4ZGMtYTRmYy0yOTNlNDY1N2NmNjAifQ.P81eWq85CbVAunISVzxHHDsXvIgNvwPJOCsidmdNUQA"
-                }
-            }
-        },
-        "authorize.Request": {
-            "type": "object",
-            "properties": {
-                "password": {
-                    "type": "string"
-                },
-                "username": {
-                    "type": "string"
-                }
-            }
-        },
-        "authorize.ResponseModel": {
-            "type": "object",
-            "properties": {
-                "auth": {
-                    "$ref": "#/definitions/authorize.Model"
                 }
             }
         },
@@ -792,15 +154,6 @@ const docTemplate = `{
                 }
             }
         },
-        "error.ForbiddenErr": {
-            "type": "object",
-            "properties": {
-                "error": {
-                    "type": "string",
-                    "example": "forbidden request"
-                }
-            }
-        },
         "error.InternalErr": {
             "type": "object",
             "properties": {
@@ -810,132 +163,26 @@ const docTemplate = `{
                 }
             }
         },
-        "order.Model": {
+        "moralis.Transaction": {
             "type": "object",
             "properties": {
-                "company_info": {},
-                "company_name": {
+                "blockNumber": {
+                    "type": "integer"
+                },
+                "blockTimestamp": {
                     "type": "string"
                 },
-                "created_at": {
+                "from": {
                     "type": "string"
                 },
-                "id": {
+                "hash": {
                     "type": "string"
                 },
-                "inn": {
+                "to": {
                     "type": "string"
                 },
-                "rejected_at": {
+                "value": {
                     "type": "string"
-                },
-                "success_at": {
-                    "type": "string"
-                },
-                "tariff_id": {
-                    "type": "string"
-                },
-                "users": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/order.User"
-                    }
-                }
-            }
-        },
-        "order.Request": {
-            "type": "object",
-            "properties": {
-                "bio": {
-                    "type": "string"
-                },
-                "birth_date": {
-                    "type": "string"
-                },
-                "birth_place": {
-                    "type": "string"
-                },
-                "comissar": {
-                    "type": "string"
-                },
-                "company_info": {
-                    "type": "string"
-                },
-                "company_name": {
-                    "type": "string"
-                },
-                "conflicts": {
-                    "type": "string"
-                },
-                "death_date": {
-                    "type": "string"
-                },
-                "death_place": {
-                    "type": "string"
-                },
-                "documents": {
-                    "description": "FixME доделать добавление документов пачкой",
-                    "type": "array",
-                    "items": {
-                        "type": "integer"
-                    }
-                },
-                "email": {
-                    "type": "string"
-                },
-                "first_name": {
-                    "type": "string"
-                },
-                "last_name": {
-                    "type": "string"
-                },
-                "patronymic": {
-                    "type": "string"
-                },
-                "phone_number": {
-                    "type": "string"
-                },
-                "rank": {
-                    "type": "string"
-                }
-            }
-        },
-        "order.ResponseModel": {
-            "type": "object",
-            "properties": {
-                "order": {
-                    "$ref": "#/definitions/order.Model"
-                }
-            }
-        },
-        "order.User": {
-            "type": "object",
-            "properties": {
-                "is_admin": {
-                    "type": "boolean"
-                },
-                "username": {
-                    "type": "string"
-                }
-            }
-        },
-        "register.Request": {
-            "type": "object",
-            "properties": {
-                "password": {
-                    "type": "string"
-                },
-                "username": {
-                    "type": "string"
-                }
-            }
-        },
-        "register.Response": {
-            "type": "object",
-            "properties": {
-                "string": {
-                    "type": "string",
-                    "example": "Ok"
                 }
             }
         },

@@ -2,8 +2,9 @@ package checkalive
 
 import (
 	"log/slog"
-	"memory-book/internal/lib/api/response"
 	"net/http"
+
+	"analyze-service/internal/lib/api/response"
 
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/go-chi/render"

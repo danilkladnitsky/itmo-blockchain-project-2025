@@ -1,7 +1,7 @@
 package postgres
 
 import (
-	"memory-book/internal/lib/utils"
+	"analyze-service/internal/lib/utils"
 )
 
 func (s *Storage) BeginTransaction() (*StorageTx, error) {

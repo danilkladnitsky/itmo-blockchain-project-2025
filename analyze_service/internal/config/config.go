@@ -5,20 +5,20 @@ import (
 	"os"
 	"time"
 
-	"memory-book/internal/storage/minio"
-	"memory-book/internal/storage/postgres"
-	"memory-book/internal/storage/redis"
+	"analyze-service/internal/storage/postgres"
+	"analyze-service/internal/storage/redis"
 
 	"github.com/ilyakaznacheev/cleanenv"
+	"github.com/joho/godotenv"
 )
 
 type (
 	Config struct {
 		Database      postgres.Database `yaml:"database"`
 		Redis         redis.Redis       `yaml:"redis"`
-		Minio         minio.Minio       `yaml:"minio"`
 		Env           string            `yaml:"env" env-default:"development"`
 		MigrationPath string            `yaml:"migration_path" env-required:"true"`
+		MoralisAPIKey string            `env:"MORALIS_API_KEY"`
 		HTTPServer    `yaml:"http_server"`
 		CORS          `yaml:"cors"`
 	}
@@ -48,6 +48,10 @@ type (
 //CONFIG_PATH=./config/local.yaml ./your-app
 
 func MustLoad() *Config {
+	if err := godotenv.Load(); err != nil {
+		log.Printf("warning: no .env file found: %v", err)
+	}
+
 	configPath := os.Getenv("CONFIG_PATH")
 	if configPath == "" {
 		log.Fatal("CONFIG_PATH environment variable is not set")
@@ -58,6 +62,15 @@ func MustLoad() *Config {
 	err := cleanenv.ReadConfig(configPath, &cfg)
 	if err != nil {
 		log.Fatalf("error reading config file: %s", err)
+	}
+
+	err = cleanenv.ReadEnv(&cfg)
+	if err != nil {
+		log.Fatalf("error reading env: %s", err)
+	}
+
+	if cfg.MoralisAPIKey == "" {
+		log.Fatal("MORALIS_API_KEY is not set")
 	}
 
 	return &cfg

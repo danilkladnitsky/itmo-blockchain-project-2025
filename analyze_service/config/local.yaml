@@ -1,11 +1,7 @@
 env: "dev" # Окружение - local, dev или prod
 migration_path: "./resources/postgres/migration" # путь к миграциям БД
 
-minio:
-  bucket_name: test
-  minio_root_user: test
-  minio_root_password: password
-  minio_host: minio:9000
+ml_service_address: "localhost:1234"
 
 database:
   addr: test_db:5432

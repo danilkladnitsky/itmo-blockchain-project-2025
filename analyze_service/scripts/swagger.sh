@@ -1,15 +1,13 @@
-~/go/bin/swag fmt  -d cmd/memory-book,\
+~/go/bin/swag fmt  -d cmd/analyze-service,\
 internal/handlers/check_alive,\
-internal/handlers/register,\
-internal/handlers/authorize,\
-internal/handlers/ELK_auth,\
+internal/handlers/analyze,\
+internal/storage/moralis,\
 internal/lib/api/error,\
 internal/lib/api/response
 
-~/go/bin/swag init -d cmd/memory-book,\
+~/go/bin/swag init -d cmd/analyze-service,\
 internal/handlers/check_alive,\
-internal/handlers/register,\
-internal/handlers/authorize,\
-internal/handlers/ELK_auth,\
+internal/handlers/analyze,\
+internal/storage/moralis,\
 internal/lib/api/error,\
 internal/lib/api/response

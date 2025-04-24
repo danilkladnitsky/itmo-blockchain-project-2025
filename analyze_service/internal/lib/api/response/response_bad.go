@@ -5,7 +5,7 @@ import (
 	"errors"
 	"net/http"
 
-	requestcontext "memory-book/internal/app/middleware/request_context"
+	requestcontext "analyze-service/internal/app/middleware/request_context"
 
 	"github.com/go-chi/render"
 )

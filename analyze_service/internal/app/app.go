@@ -9,11 +9,11 @@ import (
 	"net/http"
 	"os"
 
-	"memory-book/docs"
-	"memory-book/internal/config"
-	"memory-book/internal/storage/minio"
-	"memory-book/internal/storage/postgres"
-	"memory-book/internal/storage/redis"
+	"analyze-service/docs"
+	"analyze-service/internal/config"
+	"analyze-service/internal/storage/moralis"
+	"analyze-service/internal/storage/postgres"
+	"analyze-service/internal/storage/redis"
 
 	"github.com/golang-migrate/migrate/v4"
 	_ "github.com/golang-migrate/migrate/v4/database/postgres"
@@ -31,11 +31,11 @@ const (
 )
 
 type App struct {
-	config  *config.Config
-	logger  *slog.Logger
-	storage *postgres.Storage
-	cache   *redis.RedisDB
-	minio   *minio.MinioClient
+	config     *config.Config
+	logger     *slog.Logger
+	storage    *postgres.Storage
+	cache      *redis.RedisDB
+	moralisAPI *moralis.MoralisRepository
 
 	httpServer *http.Server
 }
@@ -54,37 +54,36 @@ func New() (App, error) {
 		slog.String("db_name", cfg.Database.DbName),
 		slog.String("db_user", cfg.Database.User))
 
-	storage, err := cfg.Database.Connect()
-	if err != nil {
-		return App{}, err
-	}
+	//storage, err := cfg.Database.Connect()
+	//if err != nil {
+	//	return App{}, err
+	//}
 
 	log.Info("initializing redis storage",
 		slog.String("addr", cfg.Redis.Addr))
 
-	cache, err := cfg.Redis.Connect()
-	if err != nil {
-		return App{}, err
+	//cache, err := cfg.Redis.Connect()
+	//if err != nil {
+	//	return App{}, err
+	//}
+
+	if cfg.MoralisAPIKey == "" {
+		return App{}, errors.New("moralis api key is required")
 	}
 
-	log.Info("initializing minio storage")
-
-	minIO, err := cfg.Minio.InitMinio()
-	if err != nil {
-		return App{}, err
-	}
+	moralisAPI := moralis.NewMoralisRepository(cfg.MoralisAPIKey)
 
 	docs.SwaggerInfo.Host = cfg.Address
 	docs.SwaggerInfo.BasePath = ""
-	docs.SwaggerInfo.Title = "MemoryBook API"
-	docs.SwaggerInfo.Description = "API for Memory book Service"
+	docs.SwaggerInfo.Title = "Wallet Analyze service API"
+	docs.SwaggerInfo.Description = "API for Wallet Analyze Service"
 
 	return App{
-		config:  cfg,
-		logger:  log,
-		storage: storage,
-		cache:   cache,
-		minio:   minIO,
+		config: cfg,
+		logger: log,
+		//storage:    storage,
+		//cache:      cache,
+		moralisAPI: moralisAPI,
 	}, nil
 }
 
