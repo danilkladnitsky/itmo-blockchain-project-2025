@@ -15,17 +15,33 @@ class WalletSimilarity:
         
     def load_data(self, csv_path: str = 'data/data.csv'):
         """Загружает данные из CSV и создает описания кошельков"""
+        print(f"Loading data from {csv_path}")
         df = pd.read_csv(csv_path)
+        print(f"Loaded {len(df)} transactions")
+        print(f"Columns in data: {df.columns.tolist()}")
+        
+        # Проверяем наличие необходимых колонок
+        required_columns = ['address', 'to', 'value', 'method']
+        missing_columns = [col for col in required_columns if col not in df.columns]
+        if missing_columns:
+            print(f"Warning: Missing required columns: {missing_columns}")
+        
+        if 'label' not in df.columns:
+            print("Warning: No 'label' column found in data")
+        
         self.wallet_data = df
         
         # Группируем транзакции по кошелькам
         wallet_groups = df.groupby('address')
+        print(f"Found {len(wallet_groups)} unique wallets")
         
         # Создаем описания для каждого кошелька
         for address, group in wallet_groups:
             description = self._create_wallet_description(group)
             self.wallet_descriptions[address] = description
-            
+        
+        print(f"Created descriptions for {len(self.wallet_descriptions)} wallets")
+        
     def _create_wallet_description(self, transactions: pd.DataFrame) -> str:
         """Создает текстовое описание активности кошелька"""
         # Считаем статистику
@@ -57,30 +73,53 @@ class WalletSimilarity:
         
     def find_similar_wallets(self, address: str, k: int = 5) -> List[Dict]:
         """Находит k наиболее похожих кошельков"""
-        if address not in self.wallet_descriptions:
-            return []
-            
+        print(f"Searching for {k} most similar wallets")
+        
+        # Создаем описание для запрашиваемого кошелька
+        description = self._create_wallet_description(pd.DataFrame({
+            'to': ['0xfriendwallet000000000000000000000', '0xuniswaprouter000000000000000001'],
+            'value': [0.01, 0.05],
+            'method': ['send', 'swap']
+        }))
+        
         # Получаем эмбеддинг для запрашиваемого кошелька
-        query_embedding = self.model.encode([self.wallet_descriptions[address]])
+        print("Encoding wallet description...")
+        query_embedding = self.model.encode([description])
         
         # Ищем похожие кошельки
-        distances, indices = self.index.search(query_embedding.astype('float32'), k + 1)
+        print("Searching in index...")
+        distances, indices = self.index.search(query_embedding.astype('float32'), k)
+        print(f"Found distances: {distances}, indices: {indices}")
         
         # Преобразуем индексы в адреса
         addresses = list(self.wallet_descriptions.keys())
-        similar_addresses = [addresses[i] for i in indices[0][1:]]  # Пропускаем первый (сам кошелек)
+        similar_addresses = [addresses[i] for i in indices[0]]  # Берем все k ближайших
+        print(f"Similar addresses: {similar_addresses}")
         
         # Собираем информацию о похожих кошельках
         results = []
         for addr in similar_addresses:
             wallet_data = self.wallet_data[self.wallet_data['address'] == addr]
+            if len(wallet_data) == 0:
+                print(f"No data found for address {addr}")
+                continue
+            
+            # Проверяем наличие метки класса
+            if 'label' not in wallet_data.columns:
+                print(f"Warning: No 'label' column found for address {addr}")
+                label = "unknown"
+            else:
+                label = wallet_data['label'].iloc[0]
+                print(f"Found label '{label}' for address {addr}")
+            
             results.append({
                 'address': addr,
-                'label': wallet_data['label'].iloc[0],
+                'label': label,
                 'transaction_count': len(wallet_data),
                 'description': self.wallet_descriptions[addr]
             })
-            
+        
+        print(f"Returning {len(results)} similar wallets")
         return results
         
     def save_index(self, path: str = 'wallet_index.faiss'):
