@@ -1,5 +1,4 @@
-# Use specific Python 3.9 version
-FROM python:3.9.18-slim
+FROM python:3.11-slim
 
 # Set working directory
 WORKDIR /app
@@ -9,11 +8,11 @@ RUN apt-get update && apt-get install -y \
     build-essential \
     && rm -rf /var/lib/apt/lists/*
 
-# Install core dependencies first
-RUN pip install --no-cache-dir \
-    numpy==1.24.3 \
-    pandas==1.5.3 \
-    scikit-learn==1.2.2
+# # Install core dependencies first
+# RUN pip install --no-cache-dir \
+#     numpy==2.2.5 \
+#     pandas==1.5.3 \
+#     scikit-learn==1.2.2
 
 # Copy requirements first to leverage Docker cache
 COPY requirements.txt .
