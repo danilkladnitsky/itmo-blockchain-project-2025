@@ -17,7 +17,7 @@ RUN go install github.com/swaggo/swag/cmd/swag@latest
 
 RUN ls -la /go/bin && /go/bin/swag --version
 
-RUN /go/bin/swag init -d cmd/analyze-service,internal/handlers/check_alive,internal/handlers/analyze
+RUN /go/bin/swag init -d cmd/analyze-service,internal/handlers/check_alive,internal/handlers/analyze,internal/storage/moralis
 
 RUN go build -o main cmd/analyze-service/main.go
 
