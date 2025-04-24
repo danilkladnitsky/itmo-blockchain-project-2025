@@ -3,6 +3,7 @@ import json
 from typing import List, Dict
 import time
 import os
+import pandas as pd
 from moralis_api import MoralisAPI
 from web3 import Web3
 from dotenv import load_dotenv
@@ -17,57 +18,97 @@ class WalletFinder:
         self.etherscan_base_url = "https://api.etherscan.io/api"
         self.opensea_base_url = "https://api.opensea.io/api/v1"
         
-    def find_drop_hunters(self, limit: int = 50) -> List[str]:
+    def find_drop_hunters(self, limit: int = 50) -> List[Dict]:
         """
-        Поиск адресов дропхантеров
+        Поиск адресов дропхантеров и их транзакций
         """
-        # Ищем адреса с высокой активностью в тестовых сетях
         testnet_addresses = self._get_active_testnet_addresses(limit)
         
-        # Фильтруем адреса по паттернам дропхантеров
-        drop_hunters = []
+        transactions_data = []
         for address in testnet_addresses:
             if self._is_drop_hunter(address):
-                drop_hunters.append(address)
-                if len(drop_hunters) >= limit:
+                txs = self.moralis.get_all_transactions(address)
+                for tx in txs:
+                    transactions_data.append({
+                        'address': address,
+                        'label': 'drop_hunter',
+                        'timestamp': int(tx.get('block_timestamp', 0)),
+                        'to': tx.get('to_address', ''),
+                        'value': float(tx.get('value', 0)) / 1e18,  # Конвертируем из wei в ETH
+                        'method': tx.get('input', '')[:10] if tx.get('input') else 'transfer'
+                    })
+                if len(transactions_data) >= limit * 10:  # Примерно 10 транзакций на адрес
                     break
-            time.sleep(1)  # Задержка для API
+            time.sleep(1)
             
-        return drop_hunters
+        return transactions_data
 
-    def find_nft_collectors(self, limit: int = 50) -> List[str]:
+    def find_nft_collectors(self, limit: int = 50) -> List[Dict]:
         """
-        Поиск адресов NFT коллекторов
+        Поиск адресов NFT коллекторов и их транзакций
         """
-        # Ищем адреса с высокой активностью на NFT маркетплейсах
         nft_addresses = self._get_nft_marketplace_addresses(limit)
         
-        collectors = []
+        transactions_data = []
         for address in nft_addresses:
             if self._is_nft_collector(address):
-                collectors.append(address)
-                if len(collectors) >= limit:
+                txs = self.moralis.get_all_transactions(address)
+                for tx in txs:
+                    transactions_data.append({
+                        'address': address,
+                        'label': 'nft_collector',
+                        'timestamp': int(tx.get('block_timestamp', 0)),
+                        'to': tx.get('to_address', ''),
+                        'value': float(tx.get('value', 0)) / 1e18,
+                        'method': self._determine_nft_method(tx)
+                    })
+                if len(transactions_data) >= limit * 10:
                     break
             time.sleep(1)
             
-        return collectors
+        return transactions_data
 
-    def find_regular_users(self, limit: int = 50) -> List[str]:
+    def find_regular_users(self, limit: int = 50) -> List[Dict]:
         """
-        Поиск адресов обычных пользователей
+        Поиск адресов обычных пользователей и их транзакций
         """
-        # Ищем адреса с умеренной активностью
         regular_addresses = self._get_regular_activity_addresses(limit)
         
-        users = []
+        transactions_data = []
         for address in regular_addresses:
             if self._is_regular_user(address):
-                users.append(address)
-                if len(users) >= limit:
+                txs = self.moralis.get_all_transactions(address)
+                for tx in txs:
+                    transactions_data.append({
+                        'address': address,
+                        'label': 'regular_user',
+                        'timestamp': int(tx.get('block_timestamp', 0)),
+                        'to': tx.get('to_address', ''),
+                        'value': float(tx.get('value', 0)) / 1e18,
+                        'method': 'transfer'  # Для обычных пользователей чаще всего простые переводы
+                    })
+                if len(transactions_data) >= limit * 10:
                     break
             time.sleep(1)
             
-        return users
+        return transactions_data
+
+    def _determine_nft_method(self, tx: Dict) -> str:
+        """Определяет метод транзакции для NFT операций"""
+        if tx.get('input', '').startswith('0x23b872dd'):  # transferFrom
+            return 'transfer'
+        elif tx.get('input', '').startswith('0xa0712d68'):  # mint
+            return 'mint'
+        elif tx.get('to', '').lower() in ['0x7be8076f4ea4a4ad08075c2508e481d6c946d12b',  # OpenSea
+                                        '0x7f268357a8c2552623316e2562d90e642bb538e5']:  # Wyvern
+            return 'buy' if float(tx.get('value', 0)) > 0 else 'sell'
+        return 'transfer'
+
+    def save_to_csv(self, data: List[Dict], filename: str = 'synthetic_wallet_data_with_tech.csv'):
+        """Сохраняет данные в CSV файл"""
+        df = pd.DataFrame(data)
+        df.to_csv(filename, index=False)
+        print(f"Данные сохранены в {filename}")
 
     def _is_drop_hunter(self, address: str) -> bool:
         """
@@ -75,6 +116,7 @@ class WalletFinder:
         """
         transactions = self.moralis.get_transactions(address)
         if not transactions:
+            print(f"Нет транзакций для адреса {address}")
             return False
             
         # Проверяем паттерны дропхантеров:
@@ -84,9 +126,21 @@ class WalletFinder:
         
         # Примерные критерии
         tx_count = len(transactions)
-        unique_contracts = len(set(tx.get('to_address') for tx in transactions))
+        print(f"Всего транзакций: {tx_count}")
         
-        return tx_count > 100 and unique_contracts > 50
+        # Собираем уникальные адреса получателей
+        unique_contracts = set()
+        for tx in transactions:
+            if isinstance(tx, dict):
+                to_address = tx.get('to')
+                if to_address:
+                    unique_contracts.add(to_address)
+        
+        unique_count = len(unique_contracts)
+        print(f"Уникальных контрактов: {unique_count}")
+        
+        # Более мягкие критерии для тестирования
+        return tx_count > 20 and unique_count > 10
 
     def _is_nft_collector(self, address: str) -> bool:
         """
@@ -130,6 +184,7 @@ class WalletFinder:
         params = {
             'module': 'account',
             'action': 'txlist',
+            'address': '0x0000000000000000000000000000000000000000',  # Пример адреса
             'startblock': 0,
             'endblock': 99999999,
             'sort': 'desc',
@@ -140,15 +195,28 @@ class WalletFinder:
             response = requests.get(self.etherscan_base_url, params=params)
             data = response.json()
             
-            if data['status'] == '1':
+            if data['status'] == '1' and 'result' in data:
                 transactions = data['result']
-                # Собираем уникальные адреса отправителей
-                addresses = list(set(tx['from'] for tx in transactions[:limit*2]))
+                if isinstance(transactions, list):
+                    # Собираем уникальные адреса отправителей и получателей
+                    for tx in transactions:
+                        if isinstance(tx, dict):
+                            if 'from' in tx:
+                                addresses.append(tx['from'])
+                            if 'to' in tx:
+                                addresses.append(tx['to'])
+                    
+                    # Удаляем дубликаты и ограничиваем количество
+                    addresses = list(set(addresses))[:limit]
+                else:
+                    print("Ошибка: результат не является списком транзакций")
+            else:
+                print(f"Ошибка API: {data.get('message', 'Неизвестная ошибка')}")
                 
         except Exception as e:
             print(f"Ошибка при получении адресов из тестовой сети: {e}")
             
-        return addresses[:limit]
+        return addresses
 
     def _get_nft_marketplace_addresses(self, limit: int) -> List[str]:
         """
@@ -225,25 +293,24 @@ class WalletFinder:
 def main():
     finder = WalletFinder()
     
-    # Собираем адреса для каждого класса
-    drop_hunters = finder.find_drop_hunters(limit=20)
-    nft_collectors = finder.find_nft_collectors(limit=20)
-    regular_users = finder.find_regular_users(limit=20)
+    # Собираем данные для каждого класса
+    print("Сбор данных о дропхантерах...")
+    drop_hunter_data = finder.find_drop_hunters(limit=200)
     
-    # Сохраняем найденные адреса
-    addresses = {
-        "drop_hunter": drop_hunters,
-        "nft_collector": nft_collectors,
-        "regular_user": regular_users
-    }
+    print("Сбор данных о NFT коллекторах...")
+    nft_collector_data = finder.find_nft_collectors(limit=200)
     
-    with open("wallet_addresses.json", "w") as f:
-        json.dump(addresses, f, indent=4)
+    print("Сбор данных об обычных пользователях...")
+    regular_user_data = finder.find_regular_users(limit=200)
     
-    print("Найдены адреса:")
-    print(f"Дропхантеры: {len(drop_hunters)}")
-    print(f"NFT коллекторы: {len(nft_collectors)}")
-    print(f"Обычные пользователи: {len(regular_users)}")
+    # Объединяем все данные
+    all_data = drop_hunter_data + nft_collector_data + regular_user_data
+    
+    # Сохраняем в CSV
+    finder.save_to_csv(all_data)
+    
+    print("Сбор данных завершен!")
+    print(f"Всего собрано {len(all_data)} транзакций")
 
 if __name__ == "__main__":
     main() 
