@@ -1,0 +1,17 @@
+$block: '.similar-wallets';
+
+#{$block} {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding-top: 8px;
+
+    &__wallet {
+        display: flex;
+        flex-direction: column;
+        padding: 8px;
+        gap: 4px;
+        border-radius: 6px;
+        
+    }
+}
