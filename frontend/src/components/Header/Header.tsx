@@ -17,7 +17,7 @@ const AppVersion = () => {
 export const Header = () => {
     return (
         <div className={b()}>
-            <div className={b('title')}>Smart Wallet</div>
+            <div className={b('title')}>AI Wallet Analysis</div>
             <AppVersion />
         </div>
     );
