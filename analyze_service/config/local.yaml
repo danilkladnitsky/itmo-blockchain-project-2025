@@ -17,7 +17,7 @@ redis:
 http_server:
   host: 0.0.0.0
   port: 8083
-  address: "localhost:8083"
+  address: "api-itmo-blockchain-2025.kladnitsky.ru"
   timeout: 5s
   idle_timeout: 5s
 
