@@ -1,4 +1,4 @@
-import {Button, Icon, Text, TextInput} from '@gravity-ui/uikit';
+import {Box, Button, Icon, Text, TextInput} from '@gravity-ui/uikit';
 import bem from 'bem-cn-lite';
 
 import './styles.scss';
@@ -12,6 +12,11 @@ const extractWalletAddressFromParams = (searchParams: string) => {
     const params = new URLSearchParams(searchParams);
     return params.get('wallet') || '';
 };
+
+const tryWallets = [
+    '0xcB1C1FdE09f811B294172696404e88E658659905',
+    '0x1231deb6f5749ef6ce6943a275a1d3e7486f4eae',
+];
 
 export const InsertWalletPage = () => {
     const {
@@ -63,6 +68,23 @@ export const InsertWalletPage = () => {
                         Search
                     </Button>
                 </div>
+                <Box>
+                    <Text variant="body-3" className={b('form-title')}>
+                        Try these wallets
+                    </Text>
+                    <div className={b('try-wallets-list')}>
+                        {tryWallets.map((wallet) => (
+                            <Button
+                                key={wallet}
+                                view="raised"
+                                className={b('try-wallets-item')}
+                                onClick={() => handleLastWalletClick(wallet)}
+                            >
+                                {wallet}
+                            </Button>
+                        ))}
+                    </div>
+                </Box>
                 <div
                     style={{display: lastWalletsList.length > 0 ? 'block' : 'none'}}
                     className={b('last-wallets')}

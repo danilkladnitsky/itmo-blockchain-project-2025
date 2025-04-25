@@ -10,6 +10,13 @@ $block: '.insert-wallet-page';
 
     }
 
+    &__try-wallets-list {
+        margin-top: 16px;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+    }
+
     &__form-input {
         display: flex;
         align-items: center;
