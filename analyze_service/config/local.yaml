@@ -1,7 +1,7 @@
 env: "dev" # Окружение - local, dev или prod
 migration_path: "./resources/postgres/migration" # путь к миграциям БД
 
-ml_service_address: "localhost:1234"
+ml_service_address: "https://ml-itmo-blockchain-2025.kladnitsky.ru/analyze"
 
 database:
   addr: test_db:5432

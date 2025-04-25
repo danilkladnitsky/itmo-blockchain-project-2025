@@ -9,7 +9,7 @@ RUN go mod download
 
 COPY . .
 
-ENV CONFIG_PATH ./config/local.yaml
+ENV CONFIG_PATH="./config/local.yaml"
 ENV GOBIN="/go/bin"
 ENV PATH="${GOBIN}:${PATH}"
 

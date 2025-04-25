@@ -14,13 +14,14 @@ import (
 
 type (
 	Config struct {
-		Database      postgres.Database `yaml:"database"`
-		Redis         redis.Redis       `yaml:"redis"`
-		Env           string            `yaml:"env" env-default:"development"`
-		MigrationPath string            `yaml:"migration_path" env-required:"true"`
-		MoralisAPIKey string            `env:"MORALIS_API_KEY"`
-		HTTPServer    `yaml:"http_server"`
-		CORS          `yaml:"cors"`
+		Database        postgres.Database `yaml:"database"`
+		Redis           redis.Redis       `yaml:"redis"`
+		Env             string            `yaml:"env" env-default:"development"`
+		MigrationPath   string            `yaml:"migration_path" env-required:"true"`
+		MoralisAPIKey   string            `env:"MORALIS_API_KEY"`
+		MLServiceAdress string            `yaml:"ml_service_address" env-required:"true"`
+		HTTPServer      `yaml:"http_server"`
+		CORS            `yaml:"cors"`
 	}
 	HTTPServer struct {
 		Host        string        `yaml:"host" env:"HTTP-IP" env-default:"0.0.0.0"`

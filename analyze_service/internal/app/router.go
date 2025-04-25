@@ -38,7 +38,7 @@ func Routes(a *App) http.Handler {
 
 	router.Get("/api/v1/alive", checkalive.New(a.logger))
 
-	router.Post("/api/v1/analyze", analyze.Analyze(a.logger, a.moralisAPI))
+	router.Post("/api/v1/analyze", analyze.Analyze(a.logger, a.moralisAPI, a.config))
 
 	router.Options("/*", func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Access-Control-Allow-Origin", "*")

@@ -1,6 +1,8 @@
 package analyze
 
 import (
+	"bytes"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"io"
@@ -8,6 +10,7 @@ import (
 	"net/http"
 	"regexp"
 
+	"analyze-service/internal/config"
 	er "analyze-service/internal/lib/api/error"
 	resp "analyze-service/internal/lib/api/response"
 	"analyze-service/internal/lib/logger/sl"
@@ -29,6 +32,19 @@ type (
 		PageSize        int                      `json:"page_size,omitempty"`
 		Transactions    []moralis.Transaction    `json:"transactions,omitempty"`
 		NativeTransfers []moralis.NativeTransfer `json:"native_transfers,omitempty"`
+		MLResult        interface{}              `json:"ml_result,omitempty"` // Result from ML service
+	}
+
+	MLRequest struct {
+		Address      string          `json:"address"`
+		Transactions []MLTransaction `json:"transactions"`
+	}
+
+	MLTransaction struct {
+		Timestamp int64   `json:"timestamp"`
+		Value     float64 `json:"value"`
+		Method    string  `json:"method"`
+		To        string  `json:"to"`
 	}
 
 	Repository interface {
@@ -44,15 +60,15 @@ const (
 //
 //	@Tags			analyze
 //	@Summary		Analyze Ethereum address
-//	@Description	Get transactions for Ethereum address using Moralis API
+//	@Description	Get transactions for Ethereum address using Moralis API and analyze with ML service
 //	@Accept			json
 //	@Produce		json
 //	@Param			request	body		Request				true	"Ethereum address to analyze"
-//	@Success		200		{object}	Response			"Transactions retrieved successfully"
+//	@Success		200		{object}	Response			"Transactions retrieved and analyzed successfully"
 //	@Failure		400		{object}	er.BadRequestErr	"Invalid Ethereum address"
 //	@Failure		500		{object}	er.InternalErr		"Internal server error"
 //	@Router			/api/v1/analyze [post]
-func Analyze(log *slog.Logger, repo Repository) http.HandlerFunc {
+func Analyze(log *slog.Logger, repo Repository, c *config.Config) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		const op = "handlers.analyze.Analyze"
 
@@ -98,6 +114,15 @@ func Analyze(log *slog.Logger, repo Repository) http.HandlerFunc {
 			slog.Int("count", len(moralisResp.Result)),
 			slog.Int("native_transfers", len(nativeTransfers)))
 
+		// Prepare data for ML service
+		mlRequest := prepareMLRequest(req.Address, moralisResp.Result)
+		mlResult, err := sendToMLService(c.MLServiceAdress, mlRequest)
+		if err != nil {
+			log.Error("failed to get ML analysis", sl.Err(err))
+			// We still return the transactions even if ML failed
+			mlResult = map[string]interface{}{"error": "ML analysis failed"}
+		}
+
 		render.JSON(w, r, Response{
 			Status:          "success",
 			Message:         fmt.Sprintf("Found %d transactions", len(moralisResp.Result)),
@@ -105,6 +130,7 @@ func Analyze(log *slog.Logger, repo Repository) http.HandlerFunc {
 			PageSize:        moralisResp.PageSize,
 			Transactions:    moralisResp.Result,
 			NativeTransfers: nativeTransfers,
+			MLResult:        mlResult,
 		})
 	}
 }
@@ -112,4 +138,58 @@ func Analyze(log *slog.Logger, repo Repository) http.HandlerFunc {
 func isValidEthAddress(address string) bool {
 	re := regexp.MustCompile(ethAddressRegex)
 	return re.MatchString(address)
+}
+
+func prepareMLRequest(address string, transactions []moralis.Transaction) MLRequest {
+	mlTxs := make([]MLTransaction, 0, len(transactions))
+
+	for _, tx := range transactions {
+		mlTx := MLTransaction{
+			Timestamp: tx.BlockTimestamp.Unix(),
+			Value:     parseValue(tx.Value),
+			Method:    tx.MethodLabel,
+			To:        tx.ToAddress,
+		}
+		mlTxs = append(mlTxs, mlTx)
+	}
+
+	return MLRequest{
+		Address:      address,
+		Transactions: mlTxs,
+	}
+}
+
+func parseValue(valueStr string) float64 {
+	// Implement your value parsing logic here
+	// This is a placeholder implementation
+	var value float64
+	_, err := fmt.Sscanf(valueStr, "%f", &value)
+	if err != nil {
+		return 0
+	}
+	return value
+}
+
+func sendToMLService(mlServiceURL string, request MLRequest) (interface{}, error) {
+	requestBody, err := json.Marshal(request)
+	if err != nil {
+		return nil, fmt.Errorf("failed to marshal ML request: %w", err)
+	}
+
+	resp, err := http.Post(mlServiceURL, "application/json", bytes.NewBuffer(requestBody))
+	if err != nil {
+		return nil, fmt.Errorf("failed to send request to ML service: %w", err)
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		return nil, fmt.Errorf("ML service returned status: %d", resp.StatusCode)
+	}
+
+	var result map[string]interface{}
+	if err := json.NewDecoder(resp.Body).Decode(&result); err != nil {
+		return nil, fmt.Errorf("failed to decode ML response: %w", err)
+	}
+
+	return result, nil
 }
