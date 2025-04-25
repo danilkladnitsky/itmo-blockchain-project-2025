@@ -17,7 +17,7 @@ redis:
 http_server:
   host: 0.0.0.0
   port: 8083
-  address: "api-itmo-blockchain-2025.kladnitsky.ru"
+  address: "itmo-blockchain-2025.kladnitsky.ru"
   timeout: 5s
   idle_timeout: 5s
 
@@ -25,7 +25,8 @@ cors:
   debug: true
   allowed-methods: [ "GET", "POST", "PATCH", "PUT", "OPTIONS", "DELETE" ]
   allowed-origins:
-    - "*"
+    - "http://localhost:5173"
+    - "https://itmo-blockchain-2025.kladnitsky.ru"
   allow-credentials: true
   allowed-headers:
     - "Authorization"

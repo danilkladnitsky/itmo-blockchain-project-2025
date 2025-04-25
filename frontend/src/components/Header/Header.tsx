@@ -1,6 +1,7 @@
 import bem from 'bem-cn-lite';
 import './Header.scss';
 import {Label, Link} from '@gravity-ui/uikit';
+import {useAppContext} from '@/App.context';
 
 const b = bem('header');
 
@@ -14,11 +15,25 @@ const AppVersion = () => {
     );
 };
 
+const BackendStatus = () => {
+    const {isBackendAlive} = useAppContext();
+    return (
+        <Label
+            size="s"
+            theme={isBackendAlive ? 'success' : 'danger'}
+            value={isBackendAlive ? 'live' : 'dead'}
+        >
+            Backend
+        </Label>
+    );
+};
+
 export const Header = () => {
     return (
         <div className={b()}>
             <div className={b('title')}>AI Wallet Analysis</div>
             <AppVersion />
+            <BackendStatus />
         </div>
     );
 };
