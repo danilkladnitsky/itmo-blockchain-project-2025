@@ -146,7 +146,7 @@ async def analyze_wallet(wallet_request: WalletRequest):
         logger.info(f"Prediction: {prediction}, Confidence: {confidence}")
         
         # Если уверенность низкая, ищем похожие кошельки
-        if confidence < 0.4:
+        if confidence < 0.5:
             logger.info("Low confidence, searching for similar wallets")
             similar_wallets = similarity_engine.find_similar_wallets(wallet_request.address, k=1)  # Берем только самый похожий
             
@@ -155,7 +155,7 @@ async def analyze_wallet(wallet_request: WalletRequest):
                 most_similar_label = similar_wallets[0]['label']
                 logger.info(f"Using label from most similar wallet: {most_similar_label}")
                 prediction = most_similar_label
-                confidence = 0.4  # Устанавливаем уверенность на пороговое значение
+                confidence = 0.5  # Устанавливаем уверенность на пороговое значение
             else:
                 logger.warning("No similar wallets found, keeping original prediction")
         
