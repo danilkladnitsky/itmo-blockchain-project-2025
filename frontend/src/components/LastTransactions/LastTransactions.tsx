@@ -85,16 +85,28 @@ const TransactionCard = ({transaction}: {transaction: Transaction}) => {
                 </Box>
             </Box>
             <Box
-                style={{display: 'flex', gap: '8px', marginTop: '16px', justifyContent: 'flex-end'}}
+                style={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gap: '8px',
+                    marginTop: '16px',
+                    justifyContent: 'flex-end',
+                }}
             >
+                <Link href={`/?wallet=${transaction.from_address}`}>
+                    <Button size="s" view="action" width="max">
+                        Analyze from address
+                        <Icon data={Magnifier} />
+                    </Button>
+                </Link>
                 <Link href={`/?wallet=${transaction.to_address}`}>
-                    <Button size="s" view="action">
-                        Analyze
+                    <Button size="s" view="action" width="max">
+                        Analyze to address
                         <Icon data={Magnifier} />
                     </Button>
                 </Link>
                 <Link href={`https://etherscan.io/tx/${transaction.hash}`} target="_blank">
-                    <Button size="s" view="action">
+                    <Button size="s" view="normal" width="max">
                         View on explorer
                         <Icon data={ArrowRight} />
                     </Button>

@@ -10,8 +10,9 @@ type AppContextType = {
     isBackendAlive: boolean;
     isLoadingWalletAnalysis: boolean;
     walletAnalysis: WalletAnalysis | null;
+    lastWalletsList: string[];
     setWalletAddress: (address: string) => void;
-    searchWallet: () => void;
+    searchWallet: (address: string) => void;
 };
 
 const AppContext = createContext<AppContextType>({} as AppContextType);
@@ -25,14 +26,17 @@ export const AppContextProvider = ({children}: {children: React.ReactNode}) => {
     const [isBackendAlive, setIsBackendAlive] = useState(false);
     const [isLoadingWalletAnalysis, setIsLoadingWalletAnalysis] = useState(false);
     const [walletAnalysis, setWalletAnalysis] = useState<WalletAnalysis | null>(null);
+    const [lastWalletsList, setLastWalletsList] = useState<string[]>([]);
+
     const navigate = useNavigate();
 
-    const searchWallet = async () => {
+    const searchWallet = async (address: string) => {
         setIsLoadingWalletAnalysis(true);
-        fetchWalletAnalysis(walletAddress)
+        fetchWalletAnalysis(address)
             .then(setWalletAnalysis)
             .finally(() => {
                 setIsLoadingWalletAnalysis(false);
+                setLastWalletsList([...lastWalletsList, walletAddress]);
                 navigate('/analyze');
             });
     };
@@ -50,6 +54,7 @@ export const AppContextProvider = ({children}: {children: React.ReactNode}) => {
                 isBackendAlive,
                 isLoadingWalletAnalysis,
                 walletAnalysis,
+                lastWalletsList,
             }}
         >
             {children}
