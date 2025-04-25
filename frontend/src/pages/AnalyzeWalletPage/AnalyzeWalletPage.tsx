@@ -18,7 +18,13 @@ export const AnalyzeWalletPage = () => {
             <WalletType />
             <LastTransactions />
             <SimilarWallets />
-            <Button size="xl" view="raised" className={b('button')} onClick={() => navigate('/')}>
+            <Button
+                width="max"
+                size="xl"
+                view="raised"
+                className={b('button')}
+                onClick={() => navigate('/')}
+            >
                 Analyze another wallet
             </Button>
         </div>

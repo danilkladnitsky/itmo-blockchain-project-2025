@@ -4,16 +4,28 @@ import bem from 'bem-cn-lite';
 import './styles.scss';
 import {CreditCard} from '@gravity-ui/icons';
 import {useAppContext} from '@/App.context';
+import {useLocation} from 'react-router';
+import {useEffect} from 'react';
 
 const b = bem('insert-wallet-page');
+const extractWalletAddressFromParams = (searchParams: string) => {
+    const params = new URLSearchParams(searchParams);
+    return params.get('wallet') || '';
+};
 
 export const InsertWalletPage = () => {
     const {walletAddress, setWalletAddress, searchWallet, isLoadingWalletAnalysis} =
         useAppContext();
 
+    const location = useLocation();
+
     const handleSearch = () => {
         searchWallet();
     };
+
+    useEffect(() => {
+        setWalletAddress(extractWalletAddressFromParams(location.search));
+    }, [location.search]);
 
     return (
         <div className={b()}>
@@ -27,6 +39,7 @@ export const InsertWalletPage = () => {
                         size="xl"
                         hasClear
                         value={walletAddress}
+                        defaultValue={extractWalletAddressFromParams(location.search)}
                         onChange={(e) => setWalletAddress(e.target.value)}
                         disabled={isLoadingWalletAnalysis}
                     />

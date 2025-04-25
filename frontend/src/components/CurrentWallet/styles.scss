@@ -3,6 +3,7 @@ $block: '.current-wallet';
 #{$block} {
     display: flex;
     max-width: 100%;
+    flex-direction: column;
 
     &__address {
         display: flex;

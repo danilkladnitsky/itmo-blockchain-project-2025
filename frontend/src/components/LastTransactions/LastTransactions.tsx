@@ -1,6 +1,6 @@
 import {useAppContext} from '@/App.context';
 import {Section} from '../Section/Section';
-import {Box, Card, Label, Text} from '@gravity-ui/uikit';
+import {Box, Button, Card, Icon, Label, Link, Text} from '@gravity-ui/uikit';
 import bem from 'bem-cn-lite';
 import {Transaction} from '@/types/walletAnalysis';
 import {
@@ -14,6 +14,7 @@ import {
 const b = bem('last-transactions');
 
 import './styles.scss';
+import {ArrowRight, Magnifier} from '@gravity-ui/icons';
 
 const TransactionCard = ({transaction}: {transaction: Transaction}) => {
     return (
@@ -82,6 +83,22 @@ const TransactionCard = ({transaction}: {transaction: Transaction}) => {
                     </Text>
                     <Text variant="caption-2">{formatGasPrice(transaction.gas_price)} Gwei</Text>
                 </Box>
+            </Box>
+            <Box
+                style={{display: 'flex', gap: '8px', marginTop: '16px', justifyContent: 'flex-end'}}
+            >
+                <Link href={`/?wallet=${transaction.to_address}`}>
+                    <Button size="s" view="action">
+                        Analyze
+                        <Icon data={Magnifier} />
+                    </Button>
+                </Link>
+                <Link href={`https://etherscan.io/tx/${transaction.hash}`} target="_blank">
+                    <Button size="s" view="action">
+                        View on explorer
+                        <Icon data={ArrowRight} />
+                    </Button>
+                </Link>
             </Box>
         </Card>
     );
