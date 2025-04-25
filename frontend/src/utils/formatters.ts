@@ -19,4 +19,4 @@ export const formatEther = (value: string): string => {
 export const formatGasPrice = (gasPrice: string): string => {
     const gweiValue = Number(gasPrice) / 1e9;
     return gweiValue.toFixed(2);
-}; 
+};
