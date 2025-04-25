@@ -19,13 +19,8 @@ const tryWallets = [
 ];
 
 export const InsertWalletPage = () => {
-    const {
-        walletAddress,
-        setWalletAddress,
-        searchWallet,
-        isLoadingWalletAnalysis,
-        lastWalletsList,
-    } = useAppContext();
+    const {walletAddress, setWalletAddress, searchWallet, isLoadingWalletAnalysis, error} =
+        useAppContext();
 
     const location = useLocation();
 
@@ -52,11 +47,12 @@ export const InsertWalletPage = () => {
                     <TextInput
                         placeholder="Wallet address in hex format"
                         size="xl"
-                        hasClear
                         value={walletAddress}
                         defaultValue={extractWalletAddressFromParams(location.search)}
                         onChange={(e) => setWalletAddress(e.target.value)}
                         disabled={isLoadingWalletAnalysis}
+                        error={error}
+                        errorPlacement="inside"
                     />
                     <Button
                         loading={isLoadingWalletAnalysis}
@@ -85,35 +81,6 @@ export const InsertWalletPage = () => {
                         ))}
                     </div>
                 </Box>
-                <div
-                    style={{display: lastWalletsList.length > 0 ? 'block' : 'none'}}
-                    className={b('last-wallets')}
-                >
-                    <Text variant="body-3" className={b('last-wallets-title')}>
-                        Last wallets
-                    </Text>
-                    <div
-                        className={b('last-wallets-list')}
-                        style={{
-                            display: 'flex',
-                            flexDirection: 'column',
-                            marginTop: '16px',
-                            gap: '8px',
-                        }}
-                    >
-                        {lastWalletsList.map((wallet) => (
-                            <Button
-                                key={wallet}
-                                width="max"
-                                view="raised"
-                                className={b('last-wallets-item')}
-                                onClick={() => handleLastWalletClick(wallet)}
-                            >
-                                {wallet}
-                            </Button>
-                        ))}
-                    </div>
-                </div>
             </div>
         </div>
     );

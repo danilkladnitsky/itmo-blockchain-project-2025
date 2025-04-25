@@ -11,6 +11,7 @@ type AppContextType = {
     isLoadingWalletAnalysis: boolean;
     walletAnalysis: WalletAnalysis | null;
     lastWalletsList: string[];
+    error: string | null;
     setWalletAddress: (address: string) => void;
     searchWallet: (address: string) => void;
 };
@@ -27,17 +28,22 @@ export const AppContextProvider = ({children}: {children: React.ReactNode}) => {
     const [isLoadingWalletAnalysis, setIsLoadingWalletAnalysis] = useState(false);
     const [walletAnalysis, setWalletAnalysis] = useState<WalletAnalysis | null>(null);
     const [lastWalletsList, setLastWalletsList] = useState<string[]>([]);
+    const [error, setError] = useState<string | null>(null);
 
     const navigate = useNavigate();
 
     const searchWallet = async (address: string) => {
         setIsLoadingWalletAnalysis(true);
         fetchWalletAnalysis(address)
-            .then(setWalletAnalysis)
-            .finally(() => {
+            .then((data) => {
+                setWalletAnalysis(data);
                 setIsLoadingWalletAnalysis(false);
                 setLastWalletsList([...lastWalletsList, address]);
                 navigate('/analyze');
+            })
+            .catch((err) => {
+                setIsLoadingWalletAnalysis(false);
+                setError(err);
             });
     };
 
@@ -55,6 +61,7 @@ export const AppContextProvider = ({children}: {children: React.ReactNode}) => {
                 isLoadingWalletAnalysis,
                 walletAnalysis,
                 lastWalletsList,
+                error,
             }}
         >
             {children}
