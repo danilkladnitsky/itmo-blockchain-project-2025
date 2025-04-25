@@ -28,26 +28,12 @@ const BackendStatus = () => {
     );
 };
 
-const MlServiceStatus = () => {
-    const {isMlServiceAlive} = useAppContext();
-    return (
-        <Label
-            size="s"
-            theme={isMlServiceAlive ? 'success' : 'danger'}
-            value={isMlServiceAlive ? 'live' : 'dead'}
-        >
-            MlService
-        </Label>
-    );
-};
-
 export const Header = () => {
     return (
         <div className={b()}>
             <div className={b('title')}>AI Wallet Analysis</div>
             <AppVersion />
             <BackendStatus />
-            <MlServiceStatus />
         </div>
     );
 };

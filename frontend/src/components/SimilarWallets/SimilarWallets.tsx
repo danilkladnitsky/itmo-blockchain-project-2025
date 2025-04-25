@@ -6,6 +6,7 @@ import {getWalletAddress} from '@/utils/formatWalletAddress';
 const b = bem('similar-wallets');
 
 import './styles.scss';
+import {useAppContext} from '@/App.context';
 interface WalletProps {
     address: string;
     balance: number;
@@ -49,12 +50,19 @@ const Wallet = ({address, balance}: WalletProps) => {
 };
 
 export const SimilarWallets = () => {
+    const {walletAnalysis} = useAppContext();
+    const {similar_wallets} = walletAnalysis?.ml_result || {};
+
     return (
         <Section title="Similar wallets" view="filled">
             <Box className={b()}>
-                <Wallet address="0x1234567890123456789012345678901234567890" balance={100} />
-                <Wallet address="0x1234567890123456789012345678901234567890" balance={100} />
-                <Wallet address="0x1234567890123456789012345678901234567890" balance={100} />
+                <Text variant="body-1">
+                    Found similar wallets:{' '}
+                    <Text color="secondary">{similar_wallets?.length || 0}</Text>
+                </Text>
+                {(similar_wallets || []).map((wallet) => (
+                    <Wallet key={wallet} address={wallet} balance={100} />
+                ))}
             </Box>
         </Section>
     );

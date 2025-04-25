@@ -5,6 +5,7 @@ import './styles.scss';
 import {SimilarWallets} from '@/components/SimilarWallets/SimilarWallets';
 import {Button} from '@gravity-ui/uikit';
 import {useNavigate} from 'react-router-dom';
+import {LastTransactions} from '@/components/LastTransactions/LastTransactions';
 
 const b = bem('analyze-wallet-page');
 
@@ -15,6 +16,7 @@ export const AnalyzeWalletPage = () => {
         <div className={b()}>
             <CurrentWallet />
             <WalletType />
+            <LastTransactions />
             <SimilarWallets />
             <Button size="xl" view="raised" className={b('button')} onClick={() => navigate('/')}>
                 Analyze another wallet

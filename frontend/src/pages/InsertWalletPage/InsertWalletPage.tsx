@@ -8,7 +8,8 @@ import {useAppContext} from '@/App.context';
 const b = bem('insert-wallet-page');
 
 export const InsertWalletPage = () => {
-    const {walletAddress, setWalletAddress, searchWallet} = useAppContext();
+    const {walletAddress, setWalletAddress, searchWallet, isLoadingWalletAnalysis} =
+        useAppContext();
 
     const handleSearch = () => {
         searchWallet();
@@ -27,8 +28,15 @@ export const InsertWalletPage = () => {
                         hasClear
                         value={walletAddress}
                         onChange={(e) => setWalletAddress(e.target.value)}
+                        disabled={isLoadingWalletAnalysis}
                     />
-                    <Button size="xl" view="action" onClick={handleSearch}>
+                    <Button
+                        loading={isLoadingWalletAnalysis}
+                        size="xl"
+                        view="action"
+                        onClick={handleSearch}
+                        disabled={isLoadingWalletAnalysis}
+                    >
                         Search
                     </Button>
                 </div>

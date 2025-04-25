@@ -1,16 +1,16 @@
 import {createContext, useContext, useEffect, useState} from 'react';
 import {useNavigate} from 'react-router';
-import {fetchBackendStatus, fetchMlServiceStatus} from './api';
+import {fetchBackendStatus, fetchWalletAnalysis} from './api';
+import {WalletAnalysis} from './types/walletAnalysis';
 
-const DEFAULT_WALLET_ADDRESS = '0x0000000000000000000000000000000000000000';
+const DEFAULT_WALLET_ADDRESS = '0xcB1C1FdE09f811B294172696404e88E658659905';
 
 type AppContextType = {
     walletAddress: string;
-    walletType: string;
     isBackendAlive: boolean;
-    isMlServiceAlive: boolean;
+    isLoadingWalletAnalysis: boolean;
+    walletAnalysis: WalletAnalysis | null;
     setWalletAddress: (address: string) => void;
-    setWalletType: (type: string) => void;
     searchWallet: () => void;
 };
 
@@ -22,18 +22,23 @@ export const useAppContext = () => {
 
 export const AppContextProvider = ({children}: {children: React.ReactNode}) => {
     const [walletAddress, setWalletAddress] = useState(DEFAULT_WALLET_ADDRESS);
-    const [walletType, setWalletType] = useState('Unknown');
     const [isBackendAlive, setIsBackendAlive] = useState(false);
-    const [isMlServiceAlive, setIsMlServiceAlive] = useState(false);
+    const [isLoadingWalletAnalysis, setIsLoadingWalletAnalysis] = useState(false);
+    const [walletAnalysis, setWalletAnalysis] = useState<WalletAnalysis | null>(null);
     const navigate = useNavigate();
 
     const searchWallet = async () => {
-        navigate('/analyze');
+        setIsLoadingWalletAnalysis(true);
+        fetchWalletAnalysis(walletAddress)
+            .then(setWalletAnalysis)
+            .finally(() => {
+                setIsLoadingWalletAnalysis(false);
+                navigate('/analyze');
+            });
     };
 
     useEffect(() => {
         fetchBackendStatus().then(setIsBackendAlive);
-        fetchMlServiceStatus().then(setIsMlServiceAlive);
     }, []);
 
     return (
@@ -41,11 +46,10 @@ export const AppContextProvider = ({children}: {children: React.ReactNode}) => {
             value={{
                 walletAddress,
                 setWalletAddress,
-                walletType,
-                setWalletType,
                 searchWallet,
                 isBackendAlive,
-                isMlServiceAlive,
+                isLoadingWalletAnalysis,
+                walletAnalysis,
             }}
         >
             {children}

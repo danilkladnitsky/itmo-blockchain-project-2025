@@ -1,20 +1,37 @@
-import {API_URL, ML_SERVICE_URL} from './const';
+import {API_URL} from './const';
 
 const fetchBackendStatus = async () => {
     try {
-        const response = await fetch(`${API_URL}/alive`);
+        const response = await fetch(`${API_URL}/alive`, {
+            method: 'GET',
+            mode: 'cors',
+            credentials: 'include',
+            headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json',
+            },
+        });
         return response.ok;
     } catch (error) {
         return false;
     }
 };
 
-const fetchMlServiceStatus = async () => {
+const fetchWalletAnalysis = async (address: string) => {
     try {
-        const response = await fetch(`${ML_SERVICE_URL}/health`);
-        return response.ok;
+        const response = await fetch(`${API_URL}/analyze`, {
+            method: 'POST',
+            body: JSON.stringify({address}),
+            mode: 'cors',
+            credentials: 'include',
+            headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json',
+            },
+        });
+        return response.json();
     } catch (error) {
-        return false;
+        return null;
     }
 };
-export {fetchBackendStatus, fetchMlServiceStatus};
+export {fetchBackendStatus, fetchWalletAnalysis};
