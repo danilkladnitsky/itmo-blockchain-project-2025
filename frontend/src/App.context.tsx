@@ -36,7 +36,7 @@ export const AppContextProvider = ({children}: {children: React.ReactNode}) => {
             .then(setWalletAnalysis)
             .finally(() => {
                 setIsLoadingWalletAnalysis(false);
-                setLastWalletsList([...lastWalletsList, walletAddress]);
+                setLastWalletsList([...lastWalletsList, address]);
                 navigate('/analyze');
             });
     };
